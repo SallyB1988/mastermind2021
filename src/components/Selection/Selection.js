@@ -1,10 +1,9 @@
-import React, { Component, Fragment, useState } from "react";
+import React, { Component, useState } from "react";
 import { Grid } from "@material-ui/core";
 import _ from "lodash";
 
 import Peg from "../Peg/Peg";
-// const colors = ["red", "yellow", "green", "blue", "black", "white"];
-// const numCols = 4;
+import { connect } from "react-redux";
 
 function splitIntoChunks(arr, chunk) {
   let newArr = [];
@@ -16,33 +15,62 @@ function splitIntoChunks(arr, chunk) {
   return newArr;
 }
 
-function DisplayPegs(props) {
-  const { colors, cellWidth } = props;
-  return (
-    <Grid container>
-      {colors.map((c) => {
-        return (
-          <Grid item xs={cellWidth}>
-            <Peg color={c}></Peg>
-          </Grid>
-        );
-      })}
-    </Grid>
-  );
+class DisplayPegs extends Component {
+  render() {
+    const { colors, cellWidth, onClick } = this.props;
+    const { selected } = this.props;
+    return (
+      <Grid container>
+        {colors.map((c, idx) => {
+          return (
+            <Grid item xs={cellWidth}>
+              <Peg
+                key={`peg-${idx}`}
+                color={c}
+                onClick={() => onClick(c)}
+              ></Peg>
+            </Grid>
+          );
+        })}
+        {selected &&
+          selected.map((c) => {
+            <Grid.Row>{c}</Grid.Row>;
+          })}
+      </Grid>
+    );
+  }
 }
 
-export default class Selection extends Component {
+class Selection extends Component {
   render() {
-    const { colors, numCols } = this.props;
+    const { colors, numCols, selectColor } = this.props;
     const rowColors = splitIntoChunks(colors, numCols);
-    const width = 12 / numCols;
+    const width = Math.floor(12 / numCols);
 
     return (
       <Grid className="selection" container>
         {rowColors.map((colors) => {
-          return <DisplayPegs colors={colors} cellWidth={width} />;
+          return (
+            <DisplayPegs
+              colors={colors}
+              cellWidth={width}
+              onClick={selectColor}
+            />
+          );
         })}
       </Grid>
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  selected: state.selected,
+  submit: state.submit,
+  colors: state.selection.colors,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  selectColor: (color) => dispatch({ type: "SELECT_COLOR", payload: color }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Selection);

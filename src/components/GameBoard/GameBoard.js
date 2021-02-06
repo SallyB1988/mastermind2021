@@ -2,7 +2,7 @@ import React from "react";
 import { Grid } from "@material-ui/core";
 import Selection from "../Selection/Selection";
 
-const colors = ["red", "yellow", "green", "blue", "black", "white"];
+// const colors = ["red", "yellow", "green", "blue", "black", "white"];
 
 function GameBoard() {
   return (
@@ -11,7 +11,7 @@ function GameBoard() {
         <h3>playing board with size section goes here</h3>
       </Grid>
       <Grid item xs={4}>
-        <Selection colors={colors} numCols={5} />
+        <Selection numCols={5} />
       </Grid>
     </Grid>
   );
